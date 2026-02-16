@@ -75,3 +75,40 @@ function renderList() {
     list.appendChild(li);
   });
 }
+// Handle creating a new trip
+function createNewTrip() {
+  let tripName = prompt("Enter a name for your new trip:");
+  if (!tripName) return; // cancel or empty input
+
+  // Avoid duplicate trip names
+  if (trips[tripName]) {
+    alert("A trip with this name already exists!");
+    return;
+  }
+
+  // Create new trip
+  trips[tripName] = [];
+  currentTrip = tripName;
+  listings = trips[currentTrip];
+
+  // Save to localStorage
+  localStorage.setItem("weekendizer_trips", JSON.stringify(trips));
+
+  // Update dropdown
+  const select = document.getElementById("tripSelect");
+  const option = document.createElement("option");
+  option.value = tripName;
+  option.textContent = tripName;
+  select.appendChild(option);
+  select.value = tripName;
+
+  renderList();
+}
+
+// Event listener for dropdown changes
+document.getElementById("tripSelect").addEventListener("change", (e) => {
+  currentTrip = e.target.value;
+  listings = trips[currentTrip] || [];
+  renderList();
+});
+
