@@ -1,238 +1,65 @@
 /* ============================
-   RESET DEFAULT STYLES
-============================ */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-/* ============================
    PAGE BASE
 ============================ */
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background-color: #f2f4f7; /* light neutral background */
+  background-color: #f2f4f7;
   color: #111;
   line-height: 1.5;
 }
 
 /* ============================
-   HERO SECTION (top banner)
-   - gradient overlay
-   - center content
-   - background image
-============================ */
-.hero {
-  width: 100%;
-  height: 280px;
-  background: 
-    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), 
-    url("https://images.unsplash.com/photo-1506744038136-46273834b3fb") center/cover no-repeat;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero-content {
-  text-align: center;
-  color: white;
-}
-
-.hero h1 {
-  font-size: 52px;
-  margin-bottom: 10px;
-}
-
-.hero p {
-  font-size: 18px;
-  opacity: 0.9;
-}
-
-/* ============================
-   MAIN APP WRAPPER
-   - centers content
-   - max width for readability
+   APP WRAPPER
 ============================ */
 .app {
   max-width: 900px;
-  margin: -60px auto 80px; /* negative top margin pulls it up under hero */
+  margin: 60px auto;
   padding: 0 20px;
 }
 
 /* ============================
    TRIP BAR
-   - select + new trip button
-   - spread apart
+   - select + buttons
+   - space between elements
 ============================ */
 .trip-bar {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 24px;
-}
-select {
-  padding: 10px 40px 14px 14px; /* <- adjust right padding for arrow spacing */
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  flex: 1;
-
-  /* optional for custom arrow */
-  appearance: none;       
-  -webkit-appearance: none;
-  -moz-appearance: none;
-
-  background: url("data:image/svg+xml,<svg ...></svg>") no-repeat right 10px center;
-  background-size: 12px;
-  background-color: white;
-}
-
-/* ============================
-   CARDS (Add stay & listings)
-   - shadows
-   - rounded corners
-============================ */
-.card {
-  background: white;
-  border-radius: 18px;
-  padding: 28px;
-  margin-bottom: 24px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-}
-
-.card h2 {
-  margin-bottom: 18px;
-}
-
-/* ============================
-   FORM INPUTS
-   - flex layout
-   - spacing
-============================ */
-.form {
-  display: flex;
-  gap: 12px;
-}
-
-input,
-select {
-  padding: 14px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  flex: 1;
-}
-
-/* ============================
-   BUTTONS
-   - primary: colored
-   - secondary: outline
-============================ */
-button {
-  background: #2563eb; /* bright blue */
-  color: white;
-  border: none;
-  border-radius: 12px;
-  padding: 14px 20px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-button.secondary {
-  background: white;
-  color: #2563eb;
-  border: 1px solid #2563eb;
-}
-
-button:hover {
-  opacity: 0.9;
-}
-
-/* ============================
-   LISTINGS
-   - remove bullets
-   - spacing between items
-============================ */
-ul {
-  list-style: none;
-}
-
-li {
-  display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 16px 0;
-  border-bottom: 1px solid #eee;
-}
-
-li:last-child {
-  border-bottom: none;
-}
-
-/* ============================
-   LINKS + DELETE BUTTONS
-============================ */
-a {
-  color: #2563eb;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.actions {
-  display: flex;
   gap: 12px;
+  margin-bottom: 24px;
+  position: relative; /* for pseudo-element arrow */
 }
 
-.delete {
-  background: none;
-  border: none;
+/* ============================
+   SELECT DROPDOWN
+   - native arrow kept
+   - visible pseudo-element arrow for demonstration
+============================ */
+#tripSelect {
+  padding: 14px 50px 14px 14px; /* <-- CHANGE second number to move text away from arrow */
+  border-radius: 12px;
+  border: 1px solid #ddd;
   font-size: 16px;
-  cursor: pointer;
-  opacity: 0.5;
-}
-
-.delete:hover {
-  opacity: 1;
-}
-
-/* ============================
-   OPTIONAL: SIDE IMAGES / ACCENT
-   - subtle images on left and right
-   - fixed position
-============================ */
-body::before,
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  width: 150px;
-  height: 100%;
-  background-image: url("https://images.unsplash.com/photo-1506744038136-46273834b3fb");
-  background-size: cover;
-  background-repeat: no-repeat;
-  opacity: 0.1; /* subtle for chic style */
-  z-index: -1;
-}
-
-body::before {
-  left: 0;
-}
-
-body::after {
-  right: 0;
-  transform: scaleX(-1); /* mirror image for symmetry */
+  flex: 1;
+  /* native arrow remains */
+  appearance: auto;
+  -webkit-appearance: auto;
+  -moz-appearance: auto;
+  position: relative;
 }
 
 /* ============================
-   RESPONSIVE TIP
+   BIG VISIBLE DEMO ARROW
+   - pseudo-element to show exactly where arrow is
 ============================ */
-@media (max-width: 600px) {
-  .form {
-    flex-direction: column;
-  }
-  .trip-bar {
-    flex-direction: column;
-    gap: 8px;
-  }
+#tripSelect::after {
+  content: "⬇";             /* big down arrow for demo */
+  font-size: 32px;          /* size of arrow */
+  color: red;               /* make it easy to see */
+  position: absolute;
+  right: 10px;              /* <-- change this to move the arrow left/right */
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;     /* let clicks go through to select */
 }
