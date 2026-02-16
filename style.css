@@ -72,7 +72,7 @@ body {
   margin-bottom: 24px;
 }
 select {
-  padding: 14px 40px 14px 14px; /* <- adjust right padding for arrow spacing */
+  padding: 50px 40px 14px 14px; /* <- adjust right padding for arrow spacing */
   border-radius: 12px;
   border: 1px solid #ddd;
   font-size: 14px;
