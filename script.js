@@ -1,51 +1,68 @@
 // --- DATA STORAGE ---
-let trips = {}; // stores multiple trips
+let trips = {}; // stores multiple trips and their listings
 let currentTrip = "default"; // currently selected trip
 let listings = []; // current trip's listings
 
-// --- LOAD SAVED DATA ON PAGE LOAD ---
+// --- LOAD DATA ON PAGE LOAD ---
 window.onload = function() {
+  // load trips from localStorage
   const savedTrips = localStorage.getItem("weekendizer_trips");
   if (savedTrips) trips = JSON.parse(savedTrips);
 
-  if (!trips[currentTrip]) trips[currentTrip] = [];
+  // ensure default trip exists
+  if (!trips["default"]) trips["default"] = [];
+
+  // set current trip
+  currentTrip = "default";
   listings = trips[currentTrip];
+
+  // populate dropdown
+  const select = document.getElementById("tripSelect");
+  select.innerHTML = ""; // clear existing options
+  for (let tripName in trips) {
+    const option = document.createElement("option");
+    option.value = tripName;
+    option.textContent = tripName;
+    select.appendChild(option);
+  }
+  select.value = currentTrip;
+
   renderList();
 };
 
 // --- SAVE DATA ---
-function saveListings() {
-  trips[currentTrip] = listings;
+function saveTrips() {
+  trips[currentTrip] = listings; // update current trip
   localStorage.setItem("weekendizer_trips", JSON.stringify(trips));
 }
 
 // --- ADD NEW LISTING ---
 function addListing() {
-  // get input values
   const link = document.getElementById("linkInput").value.trim();
   const price = parseFloat(document.getElementById("priceInput").value);
 
   if (!link || isNaN(price) || price <= 0) return alert("Enter valid data");
 
   listings.push({ link, price });
-  listings.sort((a, b) => a.price - b.price); // sort by price
-  saveListings();
+  listings.sort((a, b) => a.price - b.price);
+  saveTrips();
   renderList();
+
   document.getElementById("linkInput").value = "";
   document.getElementById("priceInput").value = "";
 }
 
 // --- DELETE LISTING ---
 function deleteListing(index) {
-  listings.splice(index, 1); // remove selected
-  saveListings();
+  listings.splice(index, 1);
+  saveTrips();
   renderList();
 }
 
-// --- RENDER THE LIST ---
+// --- RENDER LIST ---
 function renderList() {
   const list = document.getElementById("listingList");
-  list.innerHTML = ""; // clear
+  list.innerHTML = "";
   listings.forEach((item, index) => {
     const li = document.createElement("li");
     li.innerHTML = `
@@ -68,8 +85,9 @@ function createNewTrip() {
   trips[tripName] = [];
   currentTrip = tripName;
   listings = trips[currentTrip];
-  localStorage.setItem("weekendizer_trips", JSON.stringify(trips));
+  saveTrips();
 
+  // update dropdown
   const select = document.getElementById("tripSelect");
   const option = document.createElement("option");
   option.value = tripName;
