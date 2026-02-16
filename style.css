@@ -73,7 +73,7 @@ body {
    - visible demo arrow
 ============================ */
 #tripSelect {
-  padding: 140px 100px 14px 14px; /* second number controls spacing from arrow */
+  padding: 14px 100px 14px 140px; /* second number controls spacing from arrow */
   border-radius: 12px;
   border: 1px solid #ddd;
   font-size: 16px;
