@@ -1,5 +1,21 @@
 let listings = [];
 
+// Load saved listings on page load
+window.onload = function () {
+  const savedListings = localStorage.getItem("weekendizer_listings");
+  if (savedListings) {
+    listings = JSON.parse(savedListings);
+    renderList();
+  }
+};
+
+function saveListings() {
+  localStorage.setItem(
+    "weekendizer_listings",
+    JSON.stringify(listings)
+  );
+}
+
 function addListing() {
   const linkInput = document.getElementById("linkInput");
   const priceInput = document.getElementById("priceInput");
@@ -8,20 +24,25 @@ function addListing() {
   const price = parseFloat(priceInput.value);
 
   if (!link || isNaN(price) || price <= 0) {
-    alert("Please enter a valid link and a valid nightly price.");
+    alert("Please enter a valid link and price.");
     return;
   }
 
   listings.push({ link, price });
 
-  // Sort listings from lowest price to highest
   listings.sort((a, b) => a.price - b.price);
 
+  saveListings();
   renderList();
 
-  // Clear inputs
   linkInput.value = "";
   priceInput.value = "";
+}
+
+function deleteListing(index) {
+  listings.splice(index, 1);
+  saveListings();
+  renderList();
 }
 
 function renderList() {
@@ -34,18 +55,11 @@ function renderList() {
     li.innerHTML = `
       <span>#${index + 1} — $${item.price}/night</span>
       <div>
-        <a href="${item.link}" target="_blank" rel="noopener noreferrer">
-          View Listing
-        </a>
+        <a href="${item.link}" target="_blank">View</a>
         <button onclick="deleteListing(${index})">❌</button>
       </div>
     `;
 
     list.appendChild(li);
   });
-}
-
-function deleteListing(index) {
-  listings.splice(index, 1);
-  renderList();
 }
