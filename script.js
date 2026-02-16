@@ -104,3 +104,35 @@ document.getElementById("tripSelect").addEventListener("change", (e) => {
   listings = trips[currentTrip] || [];
   renderList();
 });
+function deleteCurrentTrip() {
+  if (currentTrip === "default") {
+    alert("Cannot delete the default trip!");
+    return;
+  }
+
+  if (!confirm(`Are you sure you want to delete the trip "${currentTrip}"? This will remove all its listings.`)) return;
+
+  // remove from trips object
+  delete trips[currentTrip];
+
+  // save updated trips
+  localStorage.setItem("weekendizer_trips", JSON.stringify(trips));
+
+  // update dropdown
+  const select = document.getElementById("tripSelect");
+  select.innerHTML = ""; // clear
+  for (let tripName in trips) {
+    const option = document.createElement("option");
+    option.value = tripName;
+    option.textContent = tripName;
+    select.appendChild(option);
+  }
+
+  // switch to default trip
+  currentTrip = "default";
+  listings = trips[currentTrip];
+  select.value = currentTrip;
+
+  renderList();
+}
+
