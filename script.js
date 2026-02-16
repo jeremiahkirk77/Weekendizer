@@ -27,7 +27,7 @@ function renderList() {
   listings.forEach((item, index) => {
     const li = document.createElement("li");
 
-   li.innerHTML = `
+    li.innerHTML = `
       <span>#${index + 1} — $${item.price}/night</span>
       <div>
         <a href="${item.link}" target="_blank">View</a>
@@ -37,4 +37,8 @@ function renderList() {
 
     list.appendChild(li);
   });
+}
+function deleteListing(index) {
+  listings.splice(index, 1); // remove 1 item at position index
+  renderList();
 }
