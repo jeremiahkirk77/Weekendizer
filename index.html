@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stay Price Ranker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>🏨 Stay Price Ranker</h1>
+    <p>Enter hotel or Airbnb links and compare nightly prices.</p>
+
+    <div class="form">
+      <input type="url" id="linkInput" placeholder="Paste hotel or Airbnb link" />
+      <input type="number" id="priceInput" placeholder="Nightly price ($)" />
+      <button onclick="addListing()">Add Listing</button>
+    </div>
+
+    <ul id="listingList"></ul>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
