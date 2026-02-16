@@ -27,9 +27,12 @@ function renderList() {
   listings.forEach((item, index) => {
     const li = document.createElement("li");
 
-    li.innerHTML = `
+   li.innerHTML = `
       <span>#${index + 1} — $${item.price}/night</span>
-      <a href="${item.link}" target="_blank">View Listing</a>
+      <div>
+        <a href="${item.link}" target="_blank">View</a>
+        <button onclick="deleteListing(${index})">❌</button>
+      </div>
     `;
 
     list.appendChild(li);
