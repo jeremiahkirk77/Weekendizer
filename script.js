@@ -1,20 +1,32 @@
+let trips = {};
+let currentTrip = "default";
+
 let listings = [];
 
 // Load saved listings on page load
 window.onload = function () {
-  const savedListings = localStorage.getItem("weekendizer_listings");
-  if (savedListings) {
-    listings = JSON.parse(savedListings);
-    renderList();
+  const savedTrips = localStorage.getItem("weekendizer_trips");
+  if (savedTrips) {
+    trips = JSON.parse(savedTrips);
   }
+
+  if (!trips[currentTrip]) {
+    trips[currentTrip] = [];
+  }
+
+  listings = trips[currentTrip];
+  renderList();
 };
 
+
 function saveListings() {
+  trips[currentTrip] = listings;
   localStorage.setItem(
-    "weekendizer_listings",
-    JSON.stringify(listings)
+    "weekendizer_trips",
+    JSON.stringify(trips)
   );
 }
+
 
 function addListing() {
   const linkInput = document.getElementById("linkInput");
