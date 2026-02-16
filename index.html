@@ -1,25 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Weekendizer</title>
-  <link rel="stylesheet" href="style.css">
-</head>
 <body>
+  <div class="app">
+    <header>
+      <h1>Weekendizer</h1>
+      <p>Compare stays. Pick the best weekend.</p>
+    </header>
 
-  <div class="container">
-    <h1>🏨Weekendizer</h1>
-    <p>Enter hotel or Airbnb links and compare nightly prices.</p>
+    <section class="trip-bar">
+      <select id="tripSelect">
+        <option value="default">Default Trip</option>
+      </select>
+      <button class="secondary">+ New Trip</button>
+    </section>
 
-    <div class="form">
-      <input type="url" id="linkInput" placeholder="Paste hotel or Airbnb link" />
-      <input type="number" id="priceInput" placeholder="Nightly price ($)" />
-      <button onclick="addListing()">Add Listing</button>
-    </div>
+    <section class="card">
+      <h2>Add a Stay</h2>
+      <div class="form">
+        <input
+          type="url"
+          id="linkInput"
+          placeholder="Paste hotel or Airbnb link"
+        />
+        <input
+          type="number"
+          id="priceInput"
+          placeholder="Nightly price ($)"
+        />
+        <button onclick="addListing()">Add</button>
+      </div>
+    </section>
 
-    <ul id="listingList"></ul>
+    <section class="card">
+      <h2>Best Prices</h2>
+      <ul id="listingList"></ul>
+    </section>
   </div>
 
   <script src="script.js"></script>
 </body>
-</html>
