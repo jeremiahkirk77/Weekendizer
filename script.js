@@ -33,28 +33,27 @@ const panel = document.querySelector(".trip-panel");
 const searchInput = document.getElementById("searchInput");
 const searchBtn = document.getElementById("searchBtn");
 
-// Defensive checks
-if (!homeView || !tripsView) console.warn("Views missing");
-if (!stayList) console.warn("stayList missing");
-
 // ==============================
 // VIEW HELPERS
 // ==============================
 
 function showHome() {
-  homeView.classList.add("active"); homeView.classList.remove("hidden");
-  tripsView.classList.remove("active"); tripsView.classList.add("hidden");
-  homeSearchInput && homeSearchInput.focus();
+  homeView.classList.add("active"); 
+  homeView.classList.remove("hidden");
+  tripsView.classList.remove("active"); 
+  tripsView.classList.add("hidden");
+  if (homeSearchInput) homeSearchInput.focus();
 }
 
 function showTrips() {
-  tripsView.classList.add("active"); tripsView.classList.remove("hidden");
-  homeView.classList.remove("active"); homeView.classList.add("hidden");
-  tripSelect && tripSelect.focus();
+  tripsView.classList.add("active"); 
+  tripsView.classList.remove("hidden");
+  homeView.classList.remove("active"); 
+  homeView.classList.add("hidden");
 }
 
 // ==============================
-// SEARCH: from home -> trips view
+// SEARCH LOGIC
 // ==============================
 
 function performSearch(q) {
@@ -69,70 +68,39 @@ function renderSearchResults(results, term) {
   searchResultsContainer.innerHTML = "";
 
   const heading = document.createElement("div");
-  heading.style.marginBottom = "8px";
-  heading.textContent = term ? `Search results for “${term}”` : "Search";
+  heading.style.margin = "0 0 12px 0";
+  heading.style.fontWeight = "600";
+  heading.textContent = term ? `Results for “${term}”` : "All Trips";
   searchResultsContainer.appendChild(heading);
 
   const ul = document.createElement("ul");
-  ul.className = "search-results-list";
+  ul.style.listStyle = "none";
 
   if (results.length === 0) {
     const li = document.createElement("li");
-    li.className = "search-result";
-    li.textContent = "No trips found.";
-    const addBtn = document.createElement("button");
-    addBtn.className = "btn-small";
-    addBtn.textContent = term ? `Add trip "${term}"` : "Create a new trip";
-    addBtn.addEventListener("click", () => {
-      const name = term || (tripInput && tripInput.value.trim()) || `Trip ${Date.now()}`;
-      createTripAndOpen(name);
-    });
-    const right = document.createElement("div");
-    right.className = "actions";
-    right.appendChild(addBtn);
-
-    li.appendChild(right);
+    li.innerHTML = `<div style="padding:16px; background:rgba(0,0,0,0.03); border-radius:12px;">No trips found.</div>`;
     ul.appendChild(li);
   } else {
     results.forEach(trip => {
       const li = document.createElement("li");
-      li.className = "search-result";
+      li.className = "search-result"; // Matches your result styles
+      li.style.display = "flex";
+      li.style.justifyContent = "space-between";
+      li.style.alignItems = "center";
+      li.style.padding = "10px 0";
 
-      const label = document.createElement("div");
-      label.textContent = trip.name;
-
-      const actions = document.createElement("div");
-      actions.className = "actions";
-
-      const openBtn = document.createElement("button");
-      openBtn.className = "btn-small";
-      openBtn.textContent = "Open";
-      openBtn.addEventListener("click", () => {
-        selectTripById(trip.id);
-      });
-
-      const addBtn = document.createElement("button");
-      addBtn.className = "btn-small";
-      addBtn.textContent = "Copy & New";
-      addBtn.title = "Create a new trip with this name";
-      addBtn.addEventListener("click", () => {
-        createTripAndOpen(`${trip.name} (copy)`);
-      });
-
-      actions.appendChild(openBtn);
-      actions.appendChild(addBtn);
-
-      li.appendChild(label);
-      li.appendChild(actions);
+      li.innerHTML = `
+        <span>${trip.name}</span>
+        <button class="btn-small" onclick="selectTripById(${trip.id})">Open</button>
+      `;
       ul.appendChild(li);
     });
   }
-
   searchResultsContainer.appendChild(ul);
 }
 
 // ==============================
-// TRIP CRUD & SWITCHING
+// TRIP CRUD
 // ==============================
 
 function createTripAndOpen(name) {
@@ -155,17 +123,15 @@ function addTrip() {
 function selectTripById(id) {
   const t = trips.find(tr => tr.id === id);
   if (!t) return;
-  if (panel) panel.classList.add("fade-out");
+  
+  if (panel) panel.style.opacity = "0";
+  
   setTimeout(() => {
     currentTrip = t;
     localStorage.setItem(STORAGE_CURRENT_TRIP_KEY, String(currentTrip.id));
     renderTrips();
     renderStaysWithTransition();
-    if (panel) {
-      panel.classList.remove("fade-out");
-      panel.classList.add("fade-in");
-      setTimeout(() => panel.classList.remove("fade-in"), 320);
-    }
+    if (panel) panel.style.opacity = "1";
   }, 200);
 }
 
@@ -175,43 +141,41 @@ function selectTripById(id) {
 
 function parseListing(inputText, price) {
   const text = (inputText || "").trim();
-  let platform = "Unknown";
-  let name = "Saved Stay";
+  let platform = "Other";
+  let name = text;
   let url = "";
 
   if (text.startsWith("http")) {
     url = text;
-    if (text.includes("airbnb")) { platform = "Airbnb"; name = "Airbnb Stay"; }
-    else if (text.includes("booking")) { platform = "Booking.com"; name = "Booking Stay"; }
-    else if (text.includes("hotels")) { platform = "Hotels.com"; name = "Hotels Stay"; }
-    else { name = url.replace(/^https?:\/\/(www\.)?/, "").split(/[/?#]/)[0]; }
-  } else if (text.length > 0) {
-    name = text;
+    if (text.includes("airbnb")) platform = "Airbnb";
+    else if (text.includes("booking")) platform = "Booking.com";
+    else if (text.includes("hotels")) platform = "Hotels.com";
+    name = platform + " Stay";
   }
 
   const nightly = Number(price);
-  const nightlyPrice = Number.isFinite(nightly) && nightly > 0 ? nightly : null;
-
-  return { id: Date.now(), name, platform, url, price: nightlyPrice };
+  return { 
+    id: Date.now(), 
+    name: name || "New Stay", 
+    platform, 
+    url, 
+    price: nightly > 0 ? nightly : null 
+  };
 }
 
 function addListing() {
-  if (!currentTrip) {
-    tripInput && tripInput.focus();
-    return;
-  }
+  if (!currentTrip) return;
   const value = (stayInput && stayInput.value.trim()) || "";
   const priceVal = (stayPriceInput && stayPriceInput.value.trim()) || "";
-  if (!value) { stayInput && stayInput.focus(); return; }
+  if (!value) return;
 
   const item = parseListing(value, priceVal);
-  currentTrip.stays.unshift(item);
+  currentTrip.stays.push(item);
   saveTrips();
   renderStaysWithTransition();
 
   if (stayInput) stayInput.value = "";
   if (stayPriceInput) stayPriceInput.value = "";
-  stayInput && stayInput.focus();
 }
 
 function removeStay(id) {
@@ -222,30 +186,19 @@ function removeStay(id) {
 }
 
 // ==============================
-// RENDERING (trips, stays)
+// THE UPDATED RENDERER
 // ==============================
 
 function renderTrips() {
   if (!tripSelect) return;
   tripSelect.innerHTML = "";
-
-  if (trips.length === 0) {
-    const opt = document.createElement("option");
-    opt.value = "";
-    opt.textContent = "No trips yet — create one";
-    tripSelect.appendChild(opt);
-    if (tripTitle) tripTitle.textContent = "Your Trip";
-    return;
-  }
-
   trips.forEach(trip => {
-    const option = document.createElement("option");
-    option.value = trip.id;
-    option.textContent = trip.name;
-    if (currentTrip && trip.id === currentTrip.id) option.selected = true;
-    tripSelect.appendChild(option);
+    const opt = document.createElement("option");
+    opt.value = trip.id;
+    opt.textContent = trip.name;
+    if (currentTrip && trip.id === currentTrip.id) opt.selected = true;
+    tripSelect.appendChild(opt);
   });
-
   if (tripTitle) tripTitle.textContent = currentTrip ? currentTrip.name : "Your Trip";
 }
 
@@ -253,114 +206,63 @@ function renderStaysWithTransition() {
   if (!stayList) return;
   stayList.innerHTML = "";
 
-  if (!currentTrip) {
-    const li = document.createElement("li");
-    li.className = "empty-note";
-    li.textContent = "No trip selected. Create one above to add stays.";
-    stayList.appendChild(li);
+  if (!currentTrip || !currentTrip.stays || currentTrip.stays.length === 0) {
+    stayList.innerHTML = `<li class="empty-note" style="text-align:center; padding:2rem; opacity:0.6;">No stays added yet.</li>`;
     return;
   }
 
-  if (!currentTrip.stays || currentTrip.stays.length === 0) {
+  // SORTING: Rank by price (Cheapest first)
+  const sortedStays = [...currentTrip.stays].sort((a, b) => {
+    return (a.price || Infinity) - (b.price || Infinity);
+  });
+
+  sortedStays.forEach((stay, index) => {
     const li = document.createElement("li");
-    li.className = "empty-note";
-    li.textContent = "No stays added yet — add one above.";
+    
+    // NEW: Add top-ranked class for the first (cheapest) item
+    if (index === 0) li.classList.add("top-ranked");
+
+    li.innerHTML = `
+      <div class="left">
+        <strong>${stay.name}</strong>
+        <div class="platform">${stay.platform}</div>
+      </div>
+      <div class="right">
+        <div class="price">${stay.price ? `$${stay.price}<span>/night</span>` : "—"}</div>
+        ${stay.url ? `<a href="${stay.url}" target="_blank" class="btn-view" style="margin-right:10px; font-size:12px; text-decoration:none; color:var(--brand-orange);">View</a>` : ''}
+        <button class="remove-stay-btn" data-id="${stay.id}">✕</button>
+      </div>
+    `;
+
     stayList.appendChild(li);
-    return;
-  }
-
-  currentTrip.stays.forEach(stay => {
-    const li = document.createElement("li");
-    li.setAttribute("data-id", String(stay.id));
-
-    const left = document.createElement("div");
-    left.className = "left";
-    const strong = document.createElement("strong");
-    strong.textContent = stay.name || "Stay";
-    left.appendChild(strong);
-
-    const platform = document.createElement("div");
-    platform.className = "platform";
-    platform.textContent = stay.platform || "Unknown";
-    left.appendChild(platform);
-
-    const right = document.createElement("div");
-    right.className = "right";
-
-    const price = document.createElement("div");
-    price.className = "price";
-    price.textContent = stay.price != null ? `$${stay.price}/night` : "—";
-    right.appendChild(price);
-
-    const view = document.createElement("a");
-    view.href = stay.url || "#";
-    view.target = "_blank";
-    view.rel = "noopener";
-    view.textContent = "View";
-    right.appendChild(view);
-
-    const removeBtn = document.createElement("button");
-    removeBtn.className = "remove-stay-btn";
-    removeBtn.setAttribute("data-id", String(stay.id));
-    removeBtn.textContent = "✕";
-    right.appendChild(removeBtn);
-
-    li.appendChild(left);
-    li.appendChild(right);
-
-    li.classList.add("fade-in");
-    stayList.appendChild(li);
-    requestAnimationFrame(() => {
-      li.classList.remove("fade-in");
-      li.style.opacity = "1";
-      li.style.transform = "translateY(0)";
-    });
   });
 }
 
 // ==============================
-// STORAGE
+// STORAGE & EVENTS
 // ==============================
 
 function saveTrips() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(trips));
   if (currentTrip) localStorage.setItem(STORAGE_CURRENT_TRIP_KEY, String(currentTrip.id));
-  else localStorage.removeItem(STORAGE_CURRENT_TRIP_KEY);
 }
 
-// ==============================
-// EVENTS / BINDINGS
-// ==============================
-
 if (homeSearchBtn) homeSearchBtn.addEventListener("click", () => performSearch(homeSearchInput.value));
-if (homeSearchInput) homeSearchInput.addEventListener("keydown", e => { if (e.key === "Enter") performSearch(homeSearchInput.value); });
-
-if (backHomeBtn) backHomeBtn.addEventListener("click", () => showHome());
-
+if (backHomeBtn) backHomeBtn.addEventListener("click", showHome);
 if (tripButton) tripButton.addEventListener("click", addTrip);
-if (tripSelect) tripSelect.addEventListener("change", () => {
-  const id = Number(tripSelect.value);
-  if (!Number.isNaN(id)) selectTripById(id);
-});
-
 if (stayButton) stayButton.addEventListener("click", addListing);
+
+if (tripSelect) {
+  tripSelect.addEventListener("change", () => selectTripById(Number(tripSelect.value)));
+}
+
 if (stayList) {
   stayList.addEventListener("click", e => {
-    const target = e.target;
-    if (!target) return;
-    if (target.matches(".remove-stay-btn")) {
-      const idStr = target.getAttribute("data-id");
-      const id = idStr ? Number(idStr) : NaN;
-      if (!Number.isNaN(id)) removeStay(id);
+    if (e.target.classList.contains("remove-stay-btn")) {
+      removeStay(Number(e.target.dataset.id));
     }
   });
 }
-
-if (searchBtn) searchBtn.addEventListener("click", () => {
-  const q = (searchInput && searchInput.value.trim()) || "";
-  performSearch(q);
-});
-if (searchInput) searchInput.addEventListener("keydown", e => { if (e.key === "Enter") performSearch(searchInput.value); });
 
 // ==============================
 // INIT
@@ -368,20 +270,10 @@ if (searchInput) searchInput.addEventListener("keydown", e => { if (e.key === "E
 
 function init() {
   if (trips.length > 0) {
-    if (savedTripId) {
-      const found = trips.find(t => t.id === savedTripId);
-      currentTrip = found || trips[0];
-    } else {
-      currentTrip = trips[0];
-    }
-  } else {
-    currentTrip = null;
+    currentTrip = trips.find(t => t.id === savedTripId) || trips[0];
   }
-
   renderTrips();
   renderStaysWithTransition();
-
-  // Start on home view
   showHome();
 }
 
