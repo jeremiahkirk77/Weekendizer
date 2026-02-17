@@ -18,6 +18,8 @@
   --muted: rgba(255,255,255,0.75);
   --accent-grad: linear-gradient(135deg,#06b6d4,#7C3AED); /* teal -> purple */
   --accent-soft: rgba(6,182,212,0.08);
+  --brand-orange: #ff7a18;
+  --brand-orange-soft: #ffb347;
   --radius: 14px;
   --ease: cubic-bezier(.2,.9,.3,1);
 }
@@ -81,7 +83,11 @@ body {
   font-size: 2.25rem;
   letter-spacing: -0.5px;
   margin-bottom: 6px;
-  color: #e9fbff;
+  color: var(--brand-orange);
+
+   background: linear-gradient(135deg, var(--brand-orange), var(--brand-orange-soft));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* ========================= */
