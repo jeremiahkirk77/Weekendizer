@@ -6,8 +6,9 @@
   --bg: #0b1220; /* deep navy used in lower gradient */
   --panel: rgba(255,255,255,0.03);
   --muted: rgba(6,18,38,0.85);
-  --accent-grad: linear-gradient(135deg,#06b6d4,#7C3AED); /* UI accent (kept) */
-  --accent-soft: rgba(6,182,212,0.08);
+  /* unified primary accent — orange gradient (your old orange) */
+  --accent-grad: linear-gradient(135deg,#ff7a18,#ffb347);
+  --accent-soft: rgba(255,122,24,0.08);
   --brand-orange: #ff7a18;
   --brand-orange-soft: #ffb347;
   --radius: 14px;
@@ -113,7 +114,8 @@ body {
   inset: 0;
   background:
     linear-gradient(180deg, rgba(4,12,20,0.08) 0%, rgba(1,6,10,0.15) 100%),
-    url("https://images.unsplash.com/photo-1496588152823-86ff7695e68f?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") center/cover no-repeat fixed;
+    /* compressed Unsplash image (width=1200, auto=format, fit=crop) */
+    url("https://images.unsplash.com/photo-1496588152823-86ff7695e68f?w=1200&q=80&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D") center/cover no-repeat fixed;
   filter: saturate(1.02) contrast(1.04);
   transition: transform 900ms var(--ease);
   will-change: transform;
@@ -155,6 +157,7 @@ body {
 #homeSearchInput{
   padding:12px;border-radius:12px;border:none;background:#ffffff;color:#071226;min-width:260px;box-shadow:0 6px 18px rgba(7,18,38,0.06);
 }
+/* home search button uses unified orange accent */
 #homeSearchBtn{padding:10px 14px;border-radius:12px;border:none;background:var(--accent-grad);color:#031018;cursor:pointer}
 
 /* ========================= */
@@ -215,11 +218,12 @@ body {
   box-shadow: 0 6px 18px rgba(7,18,38,0.04);
 }
 
+/* trip-bar buttons now use unified orange accent */
 .trip-bar button {
   padding: 10px 14px;
   border-radius: 12px;
   border: none;
-  background: linear-gradient(135deg, #ff7a18, #ffb347); /* you used orange here */
+  background: var(--accent-grad);
   color: #031018;
   font-weight: 700;
   cursor: pointer;
@@ -261,11 +265,12 @@ body {
 .listing-input input[type="text"] { flex: 1 1 60%; min-width: 160px; }
 .listing-input input[type="number"] { width: 140px; text-align:center; }
 
+/* Add listing button now uses unified orange accent */
 .listing-input button {
   padding: 12px 16px;
   border-radius: 12px;
   border: none;
-  background: linear-gradient(135deg,#6a9cff,#8b6bff);
+  background: var(--accent-grad);
   color: white;
   cursor: pointer;
   font-weight: 700;
