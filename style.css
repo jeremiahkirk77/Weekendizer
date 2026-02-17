@@ -37,6 +37,36 @@ body {
   padding: 40px 24px 80px;
 }
 
+/* ============================
+   HERO SECTION
+============================ */
+.hero {
+  width: 100%;
+  height: 280px;
+  background: 
+    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), 
+    url("https://unsplash.com/photos/panoramic-photography-of-brooklyn-bridge-_QdFx92MO2U") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-content {
+  text-align: center;
+  color: white;
+}
+
+.hero h1 {
+  font-size: 52px;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+
 /* ========================= */
 /* HEADER */
 /* ========================= */
