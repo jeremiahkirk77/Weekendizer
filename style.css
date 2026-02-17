@@ -1,48 +1,62 @@
 /* ========================= */
-/* THEME VARIABLES - Modernized */
+/* THEME VARIABLES */
 /* ========================= */
-
 :root {
   --bg: #f0f2f5;
   --panel: rgba(255, 255, 255, 0.75);
   --glass-border: rgba(255, 255, 255, 0.4);
-  
-  /* Sunset Coral Gradient (More "Vacation" vibe) */
   --accent-grad: linear-gradient(135deg, #ff6b6b, #ff9f43);
   --accent-soft: rgba(255, 107, 107, 0.1);
   --brand-orange: #ff6b6b;
-  
   --radius-lg: 24px;
   --radius-md: 16px;
-  --ease: cubic-bezier(0.16, 1, 0.3, 1); /* Apple-style "out" easing */
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --shadow-float: 0 20px 40px rgba(0, 0, 0, 0.08);
 }
 
 /* ========================= */
-/* RESET & GLOBAL */
+/* RESET & LAYOUT */
 /* ========================= */
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
   min-height: 100vh;
   background-color: var(--bg);
-  /* Added a subtle mesh gradient for texture */
   background-image: 
     radial-gradient(at 0% 0%, hsla(253,16%,7%,0.03) 0, transparent 50%), 
     radial-gradient(at 50% 0%, hsla(225,39%,30%,0.03) 0, transparent 50%);
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, sans-serif;
   color: #1a1f26;
   -webkit-font-smoothing: antialiased;
-  display: flex;
-  justify-content: center;
   padding: 40px 16px;
 }
 
-/* ========================= */
-/* HERO - With Ken Burns Effect */
-/* ========================= */
+.app-wrapper { width: 100%; display: flex; justify-content: center; }
+.app-container { width: 100%; max-width: 960px; }
 
+/* ========================= */
+/* VIEW TOGGLING (The Fix) */
+/* ========================= */
+.view {
+  width: 100%;
+  transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
+}
+
+.view.hidden {
+  display: none; /* Prevents overlapping */
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.view.active {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ========================= */
+/* HERO SECTION */
+/* ========================= */
 .hero {
   position: relative;
   width: 100%;
@@ -53,15 +67,14 @@ body {
   overflow: hidden;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-float);
+  background: #000;
 }
 
 .hero__visual {
   position: absolute;
   inset: 0;
   background: url("https://images.unsplash.com/photo-1496588152823-86ff7695e68f?w=1200&q=80&auto=format&fit=crop") center/cover no-repeat;
-  filter: brightness(0.85) saturate(1.1);
-  z-index: 0;
-  transition: transform 10s linear;
+  filter: brightness(0.7);
   animation: kenBurns 30s infinite alternate;
 }
 
@@ -75,133 +88,96 @@ body {
   z-index: 2;
   text-align: center;
   color: white;
-  text-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  padding: 20px;
 }
 
-.hero__title {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  margin-bottom: 12px;
+.hero__title { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 1rem; }
+
+.home-search {
+  display: flex;
+  gap: 10px;
+  background: white;
+  padding: 8px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-/* ========================= */
-/* TRIP PANEL - The Glass Box */
-/* ========================= */
+.home-search input { border: none; padding: 10px; flex: 1; outline: none; }
 
+/* ========================= */
+/* TRIP PANEL & LISTS */
+/* ========================= */
 .trip-panel {
-  width: 90%;
-  max-width: 860px;
   background: var(--panel);
   backdrop-filter: blur(16px) saturate(180%);
   -webkit-backdrop-filter: blur(16px) saturate(180%);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
   padding: 32px;
-  margin-top: -120px; /* Stronger overlap */
-  position: relative;
-  z-index: 4;
+  margin-top: 20px;
   box-shadow: var(--shadow-float);
-  transition: transform 0.4s var(--ease);
 }
 
-.trip-panel:hover {
-  transform: translateY(-5px);
-}
+.nav-bar { margin-bottom: 20px; }
+#backHomeBtn { background: none; color: var(--brand-orange); padding: 0; font-weight: 600; }
 
-/* ========================= */
-/* INPUTS & BUTTONS */
-/* ========================= */
+.trip-bar, .listing-input {
+  display: flex;
+  gap: 10px;
+  margin: 15px 0;
+  flex-wrap: wrap;
+}
 
 input[type="text"], input[type="number"], select {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.05);
-  padding: 14px 18px;
+  background: white;
+  border: 1px solid rgba(0,0,0,0.08);
+  padding: 12px 16px;
   border-radius: var(--radius-md);
-  font-size: 15px;
-  transition: all 0.2s ease;
-}
-
-input:focus {
-  outline: none;
-  border-color: var(--brand-orange);
-  box-shadow: 0 0 0 4px var(--accent-soft);
-  background: #fff;
+  flex: 1;
 }
 
 button {
   background: var(--accent-grad);
-  color: white !important;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  padding: 14px 24px;
-  border-radius: var(--radius-md);
+  color: white;
   border: none;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s var(--ease), filter 0.2s ease;
+  transition: transform 0.2s;
 }
 
-button:hover {
-  transform: scale(1.03);
-  filter: brightness(1.1);
-}
-
-button:active { transform: scale(0.97); }
-
-/* ========================= */
-/* THE LIST - Ranking UI */
-/* ========================= */
-
-#stayList { list-style: none; margin-top: 20px; }
+button:active { transform: scale(0.95); }
 
 #stayList li {
+  list-style: none;
+  background: white;
+  margin-top: 12px;
+  padding: 20px;
+  border-radius: var(--radius-md);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: white;
-  padding: 20px 24px;
-  border-radius: var(--radius-md);
-  margin-bottom: 16px;
-  border: 1px solid rgba(0,0,0,0.03);
   transition: all 0.3s var(--ease);
 }
 
-#stayList li:hover {
-  transform: translateX(8px);
-  border-color: var(--brand-orange-soft);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
-}
+#stayList li:hover { transform: translateX(5px); }
 
-/* UX: Highlight the #1 Trip */
+/* TOP RANKED STYLE */
 #stayList li.top-ranked {
   border-left: 6px solid #ffd700;
   background: linear-gradient(90deg, #fffcf0 0%, #ffffff 100%);
 }
 
-#stayList li .price {
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: var(--brand-orange);
-}
+.price { font-weight: 800; color: var(--brand-orange); font-size: 1.2rem; }
+.price span { font-size: 0.8rem; opacity: 0.6; }
 
-.remove-stay-btn {
-  background: transparent;
-  color: #ff4d4d !important;
-  font-size: 0.8rem;
-  opacity: 0.5;
-}
+.platform { font-size: 0.8rem; color: #666; }
+.remove-stay-btn { background: none; color: #ff4d4d; padding: 5px; }
 
-.remove-stay-btn:hover {
-  opacity: 1;
-  background: rgba(255, 77, 77, 0.1);
-}
+.divider { border: 0; height: 1px; background: rgba(0,0,0,0.05); margin: 20px 0; }
 
-/* ========================= */
-/* RESPONSIVE */
-/* ========================= */
-
-@media (max-width: 720px) {
-  .trip-panel { padding: 20px; width: 95%; margin-top: -60px; }
-  .listing-input { flex-direction: column; }
-  .listing-input input, .listing-input button { width: 100% !important; }
+@media (max-width: 600px) {
+  .home-search { flex-direction: column; }
+  .listing-input input { width: 100%; }
 }
