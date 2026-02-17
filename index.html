@@ -3,82 +3,55 @@
 <head>
   <meta charset="UTF-8" />
   <title>Weekendizer</title>
-
-  <!-- Mobile-friendly scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Main stylesheet -->
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <!-- ========================= -->
-  <!-- PAGE CONTAINER -->
-  <!-- ========================= -->
-  <div class="app-container">
+  <div class="app-wrapper">
+    <div class="app-container">
 
-    <!-- ========================= -->
-    <!-- HEADER -->
-    <!-- ========================= -->
-    <header class="app-header">
-      <h1>Weekendizer</h1>
-      <p class="subtitle">Plan smarter weekend escapes</p>
-    </header>
+      <!-- HEADER -->
+      <header class="app-header">
+        <h1>Weekendizer</h1>
+        <p class="subtitle">Plan smarter weekend escapes</p>
+      </header>
 
-    <!-- ========================= -->
-    <!-- TRIP CREATION BAR -->
-    <!-- ========================= -->
-    <section class="trip-bar">
-      <input
-        type="text"
-        id="tripNameInput"
-        placeholder="Name your trip (e.g. NYC Weekend)"
-      />
-      <button onclick="addTrip()">New Trip</button>
-    </section>
-
-    <!-- ========================= -->
-    <!-- TRIP SELECT DROPDOWN -->
-    <!-- ========================= -->
-    <section class="trip-selector">
-      <select id="tripSelect" onchange="switchTrip()">
-        <!-- Trips populated by JS -->
-      </select>
-    </section>
-
-    <!-- ========================= -->
-    <!-- ACTIVE TRIP PANEL -->
-    <!-- ========================= -->
-    <section class="trip-panel">
-
-      <h2 id="currentTripTitle">Your Trip</h2>
-
-      <!-- ========================= -->
-      <!-- STAY INPUT -->
-      <!-- ========================= -->
-      <div class="listing-input">
+      <!-- TRIP CREATION -->
+      <section class="trip-bar">
         <input
           type="text"
-          id="listingUrl"
-          placeholder="Paste Airbnb or hotel link"
+          id="tripNameInput"
+          placeholder="Name your trip (e.g. NYC Weekend)"
         />
-        <button onclick="addListing()">Add Stay</button>
-      </div>
+        <button>New Trip</button>
+      </section>
 
-      <!-- ========================= -->
-      <!-- STAY LIST -->
-      <!-- ========================= -->
-      <ul id="stayList">
-        <!-- Stay entries rendered by JS -->
-      </ul>
+      <!-- TRIP SELECT -->
+      <section class="trip-selector">
+        <select id="tripSelect"></select>
+      </section>
 
-    </section>
+      <!-- ACTIVE TRIP -->
+      <section class="trip-panel">
+        <h2 id="currentTripTitle">Your Trip</h2>
 
+        <div class="listing-input">
+          <input
+            type="text"
+            id="listingUrl"
+            placeholder="Paste Airbnb or hotel link"
+          />
+          <button>Add Stay</button>
+        </div>
+
+        <ul id="stayList"></ul>
+      </section>
+
+    </div>
   </div>
 
-  <!-- ========================= -->
-  <!-- SCRIPT -->
-  <!-- ========================= -->
   <script src="script.js"></script>
 </body>
 </html>
