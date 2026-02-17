@@ -1,291 +1,192 @@
-/* ============================
-   RESET DEFAULT STYLES
-============================ */
+/* ========================= */
+/* RESET */
+/* ========================= */
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-/* ============================
-   PAGE BASE
-============================ */
+/* ========================= */
+/* PAGE LAYOUT */
+/* ========================= */
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background-color: #f2f4f7; /* light neutral background */
-  color: #111;
-  line-height: 1.5;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #1c1c1c, #0e0e0e);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  color: white;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
-/* ============================
-   HERO SECTION
-============================ */
-.hero {
+/* centers the app horizontally */
+.app-wrapper {
   width: 100%;
-  height: 280px;
-  background: 
-    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), 
-    url("https://images.unsplash.com/photo-1506744038136-46273834b3fb") center/cover no-repeat;
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 
-.hero-content {
+/* main column */
+.app-container {
+  width: 100%;
+  max-width: 760px;
+  padding: 40px 24px 80px;
+}
+
+/* ========================= */
+/* HEADER */
+/* ========================= */
+
+.app-header {
   text-align: center;
-  color: white;
+  margin-bottom: 36px;
 }
 
-.hero h1 {
-  font-size: 52px;
-  margin-bottom: 10px;
+.app-header h1 {
+  font-size: 3rem;
+  letter-spacing: -1px;
 }
 
-.hero p {
-  font-size: 18px;
-  opacity: 0.9;
+.subtitle {
+  opacity: 0.7;
+  margin-top: 8px;
 }
 
-/* ============================
-   MAIN APP WRAPPER
-============================ */
-.app {
-  max-width: 900px;
-  margin: -60px auto 80px;
-  padding: 0 20px;
-}
+/* ========================= */
+/* TRIP BAR */
+/* ========================= */
 
-/* ============================
-   TRIP BAR
-============================ */
 .trip-bar {
   display: flex;
-  justify-content: space-between;
   gap: 12px;
-  margin-bottom: 24px;
-  position: relative;
-  align-items: center;
+  margin-bottom: 20px;
 }
 
-/* ============================
-   SELECT DROPDOWN
-   - keep native arrow
-   - visible demo arrow
-============================ */
-#tripSelect {
-  padding: 14px 40px 14px 14px; /* second number controls spacing from arrow */
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  font-size: 16px;
+.trip-bar input {
   flex: 1;
-
-  /* keep native arrow */
-  appearance: auto;
-  -webkit-appearance: auto;
-  -moz-appearance: auto;
-  position: relative;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: #151515;
+  color: white;
 }
 
-/* DEMO: big visible arrow to show placement */
-#tripSelect::after {
-  content: "⬇";             /* demo arrow */
-  font-size: 32px;          /* size of arrow */
-  color: red;               /* visible */
-  position: absolute;
-  right: 10px;              /* change to move arrow left/right */
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
+.trip-bar button {
+  padding: 14px 18px;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #ff7a18, #ffb347);
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-/* ============================
-   BUTTONS
-============================ */
-button {
-  background: #2563eb;
+/* ========================= */
+/* TRIP SELECT */
+/* ========================= */
+
+.trip-selector {
+  margin-bottom: 30px;
+}
+
+.trip-selector select {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #151515;
   color: white;
   border: none;
-  border-radius: 12px;
-  padding: 14px 20px;
-  font-weight: 600;
-  cursor: pointer;
 }
 
-button.secondary {
-  background: white;
-  color: #2563eb;
-  border: 1px solid #2563eb;
-}
+/* ========================= */
+/* TRIP PANEL */
+/* ========================= */
 
-button:hover {
-  opacity: 0.9;
-}
-
-/* ============================
-   CARDS
-============================ */
-.card {
-  background: white;
-  border-radius: 18px;
+.trip-panel {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 24px;
   padding: 28px;
-  margin-bottom: 24px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  backdrop-filter: blur(10px);
+
+  transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
-.card h2 {
-  margin-bottom: 18px;
+.trip-panel h2 {
+  margin-bottom: 20px;
 }
 
-/* ============================
-   FORM INPUTS
-============================ */
-.form {
-  display: flex;
-  gap: 12px;
-}
+/* ========================= */
+/* STAY INPUT */
+/* ========================= */
 
-input {
-  padding: 14px;
-  border-radius: 12px;
-  border: 1px solid #ddd;
-  font-size: 14px;
-  flex: 1;
-}
-
-/* ============================
-   LISTINGS
-============================ */
-ul {
-  list-style: none;
-}
-
-li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 16px 0;
-  border-bottom: 1px solid #eee;
-}
-
-li:last-child {
-  border-bottom: none;
-}
-
-a {
-  color: #2563eb;
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.actions {
-  display: flex;
-  gap: 12px;
-}
-
-.delete {
-  background: none;
-  border: none;
-  font-size: 16px;
-  cursor: pointer;
-  opacity: 0.5;
-}
-
-.delete:hover {
-  opacity: 1;
-}
-
-/* ============================
-   SIDE IMAGES / ACCENT
-============================ */
-body::before,
-body::after {
-  content: "";
-  position: fixed;
-  top: 0;
-  width: 150px;
-  height: 100%;
-  background-image: url("https://images.unsplash.com/photo-1506744038136-46273834b3fb");
-  background-size: cover;
-  background-repeat: no-repeat;
-  opacity: 0.1;
-  z-index: -1;
-}
-
-body::before { left: 0; }
-body::after { right: 0; transform: scaleX(-1); }
-
-/* ============================
-   RESPONSIVE
-============================ */
-@media (max-width: 600px) {
-  .form {
-    flex-direction: column;
-  }
-  .trip-bar {
-    flex-direction: column;
-    gap: 8px;
-  }
-}
 .listing-input {
   display: flex;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 .listing-input input {
   flex: 1;
-  padding: 12px;
-  border-radius: 10px;
+  padding: 14px;
+  border-radius: 14px;
   border: none;
-  background: #1c1c1c;
+  background: #151515;
   color: white;
 }
 
 .listing-input button {
-  background: linear-gradient(135deg, #ff7a18, #ffb347);
+  padding: 14px 18px;
+  border-radius: 14px;
   border: none;
-  padding: 12px 18px;
-  border-radius: 10px;
+  background: linear-gradient(135deg, #6a5acd, #836fff);
+  color: white;
   cursor: pointer;
-  font-weight: bold;
+}
+
+/* ========================= */
+/* STAY LIST */
+/* ========================= */
+
+#stayList {
+  list-style: none;
 }
 
 #stayList li {
-  background: #151515;
-  padding: 14px;
-  border-radius: 12px;
-  margin-top: 12px;
   display: flex;
-  align-items: center;
   justify-content: space-between;
+  align-items: center;
+
+  background: #111;
+  padding: 16px 18px;
+  border-radius: 16px;
+  margin-bottom: 12px;
 }
 
 #stayList a {
   color: #ffb347;
   text-decoration: none;
+  margin-right: 12px;
 }
 
 .platform {
   font-size: 12px;
   opacity: 0.6;
 }
+
 /* ========================= */
-/* TRIP SWITCH ANIMATION */
+/* ANIMATION */
 /* ========================= */
 
-.trip-panel {
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-
-/* When panel is exiting */
-.trip-panel.fade-out {
+.fade-out {
   opacity: 0;
-  transform: translateY(15px);
+  transform: translateY(14px);
 }
 
-/* When panel is entering */
-.trip-panel.fade-in {
+.fade-in {
   opacity: 1;
   transform: translateY(0);
 }
-
