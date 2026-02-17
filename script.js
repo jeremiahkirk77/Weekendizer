@@ -1,140 +1,81 @@
-// --- DATA STORAGE ---
-let trips = {}; // stores multiple trips and their listings
-let currentTrip = "default"; // currently selected trip
-let listings = []; // current trip's listings
+// ==============================
+// GLOBAL STATE
+// ==============================
 
-// --- LOAD DATA ON PAGE LOAD ---
-window.onload = function() {
-  // load trips from localStorage
-  const savedTrips = localStorage.getItem("weekendizer_trips");
-  if (savedTrips) trips = JSON.parse(savedTrips);
+let trips = JSON.parse(localStorage.getItem("weekendizerTrips")) || [];
+let currentTrip = null;
 
-  // ensure default trip exists
-  if (!trips["default"]) trips["default"] = [];
+// ==============================
+// DOM ELEMENTS
+// ==============================
 
-  // set current trip
-  currentTrip = "default";
-  listings = trips[currentTrip];
+const tripInput = document.getElementById("tripNameInput");
+const tripButton = document.querySelector(".trip-bar button");
+const tripSelect = document.getElementById("tripSelect");
+const stayInput = document.getElementById("listingUrl");
+const stayButton = document.querySelector(".listing-input button");
+const stayList = document.getElementById("stayList");
+const tripTitle = document.getElementById("currentTripTitle");
+const panel = document.querySelector(".trip-panel");
 
-  // populate dropdown
-  const select = document.getElementById("tripSelect");
-  select.innerHTML = ""; // clear existing options
-  for (let tripName in trips) {
-    const option = document.createElement("option");
-    option.value = tripName;
-    option.textContent = tripName;
-    select.appendChild(option);
-  }
-  select.value = currentTrip;
+// ==============================
+// EVENT LISTENERS
+// ==============================
 
-  renderList();
-};
+tripButton.addEventListener("click", addTrip);
+stayButton.addEventListener("click", addListing);
+tripSelect.addEventListener("change", switchTrip);
 
-// --- SAVE DATA ---
-function saveTrips() {
-  trips[currentTrip] = listings; // update current trip
-  localStorage.setItem("weekendizer_trips", JSON.stringify(trips));
-}
+// ==============================
+// TRIP FUNCTIONS
+// ==============================
 
-// --- ADD NEW LISTING ---
-function addListing() {
-  const link = document.getElementById("linkInput").value.trim();
-  const price = parseFloat(document.getElementById("priceInput").value);
+function addTrip() {
+  const name = tripInput.value.trim();
+  if (!name) return;
 
-  if (!link || isNaN(price) || price <= 0) return alert("Enter valid data");
+  const newTrip = {
+    id: Date.now(),
+    name,
+    stays: []
+  };
 
-  listings.push({ link, price });
-  listings.sort((a, b) => a.price - b.price);
+  trips.push(newTrip);
+  currentTrip = newTrip;
+
   saveTrips();
-  renderList();
+  renderTrips();
+  renderStays();
 
-  document.getElementById("linkInput").value = "";
-  document.getElementById("priceInput").value = "";
+  tripInput.value = "";
 }
 
-// --- DELETE LISTING ---
-function deleteListing(index) {
-  listings.splice(index, 1);
-  saveTrips();
-  renderList();
+function switchTrip() {
+  const tripId = Number(tripSelect.value);
+  const nextTrip = trips.find(t => t.id === tripId);
+  if (!nextTrip) return;
+
+  // Animate out
+  panel.classList.add("fade-out");
+
+  setTimeout(() => {
+    currentTrip = nextTrip;
+    tripTitle.textContent = currentTrip.name;
+    renderStays();
+
+    panel.classList.remove("fade-out");
+    panel.classList.add("fade-in");
+
+    setTimeout(() => {
+      panel.classList.remove("fade-in");
+    }, 300);
+  }, 250);
 }
 
-// --- RENDER LIST ---
-function renderList() {
-  const list = document.getElementById("listingList");
-  list.innerHTML = "";
-  listings.forEach((item, index) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <span>#${index + 1} — $${item.price}/night</span>
-      <div class="actions">
-        <a href="${item.link}" target="_blank">View</a>
-        <button class="delete" onclick="deleteListing(${index})">❌</button>
-      </div>
-    `;
-    list.appendChild(li);
-  });
-}
+// ==============================
+// STAY FUNCTIONS
+// ==============================
 
-// --- CREATE NEW TRIP ---
-function createNewTrip() {
-  let tripName = prompt("Enter a name for your new trip:");
-  if (!tripName) return;
-  if (trips[tripName]) return alert("Trip already exists!");
-
-  trips[tripName] = [];
-  currentTrip = tripName;
-  listings = trips[currentTrip];
-  saveTrips();
-
-  // update dropdown
-  const select = document.getElementById("tripSelect");
-  const option = document.createElement("option");
-  option.value = tripName;
-  option.textContent = tripName;
-  select.appendChild(option);
-  select.value = tripName;
-
-  renderList();
-}
-
-// --- SWITCH TRIPS ---
-document.getElementById("tripSelect").addEventListener("change", (e) => {
-  currentTrip = e.target.value;
-  listings = trips[currentTrip] || [];
-  renderList();
-});
-function deleteCurrentTrip() {
-  if (currentTrip === "default") {
-    alert("Cannot delete the default trip!");
-    return;
-  }
-
-  if (!confirm(`Are you sure you want to delete the trip "${currentTrip}"? This will remove all its listings.`)) return;
-
-  // remove from trips object
-  delete trips[currentTrip];
-
-  // save updated trips
-  localStorage.setItem("weekendizer_trips", JSON.stringify(trips));
-
-  // update dropdown
-  const select = document.getElementById("tripSelect");
-  select.innerHTML = ""; // clear
-  for (let tripName in trips) {
-    const option = document.createElement("option");
-    option.value = tripName;
-    option.textContent = tripName;
-    select.appendChild(option);
-  }
-
-  // switch to default trip
-  currentTrip = "default";
-  listings = trips[currentTrip];
-  select.value = currentTrip;
-
-  renderList();
-}
 function parseListing(url) {
   let platform = "Unknown";
   let name = "Saved Stay";
@@ -145,81 +86,93 @@ function parseListing(url) {
   } else if (url.includes("booking")) {
     platform = "Booking.com";
     name = "Hotel Booking";
-  } else if (url.includes("hotels.com")) {
+  } else if (url.includes("hotels")) {
     platform = "Hotels.com";
     name = "Hotel Stay";
   }
 
   return {
     id: Date.now(),
-    platform,
     name,
+    platform,
     url
   };
 }
 
 function addListing() {
-  const input = document.getElementById("listingUrl");
-  const url = input.value.trim();
+  if (!currentTrip) return;
+
+  const url = stayInput.value.trim();
   if (!url) return;
 
-  const stay = parseListing(url);
-  currentTrip.stays.push(stay);
+  currentTrip.stays.push(parseListing(url));
 
   saveTrips();
   renderStays();
+  stayInput.value = "";
+}
 
-  input.value = "";
+function removeStay(id) {
+  currentTrip.stays = currentTrip.stays.filter(s => s.id !== id);
+  saveTrips();
+  renderStays();
+}
+
+// ==============================
+// RENDERING
+// ==============================
+
+function renderTrips() {
+  tripSelect.innerHTML = "";
+
+  trips.forEach(trip => {
+    const option = document.createElement("option");
+    option.value = trip.id;
+    option.textContent = trip.name;
+    if (currentTrip && trip.id === currentTrip.id) {
+      option.selected = true;
+    }
+    tripSelect.appendChild(option);
+  });
+
+  tripTitle.textContent = currentTrip ? currentTrip.name : "Your Trip";
 }
 
 function renderStays() {
-  const list = document.getElementById("stayList");
-  list.innerHTML = "";
+  stayList.innerHTML = "";
+
+  if (!currentTrip) return;
 
   currentTrip.stays.forEach(stay => {
     const li = document.createElement("li");
     li.innerHTML = `
-      <strong>${stay.name}</strong>
-      <span class="platform">${stay.platform}</span>
-      <a href="${stay.url}" target="_blank">View</a>
-      <button onclick="removeStay(${stay.id})">✕</button>
+      <div>
+        <strong>${stay.name}</strong>
+        <div class="platform">${stay.platform}</div>
+      </div>
+      <div>
+        <a href="${stay.url}" target="_blank">View</a>
+        <button onclick="removeStay(${stay.id})">✕</button>
+      </div>
     `;
-    list.appendChild(li);
+    stayList.appendChild(li);
   });
 }
 
-function removeStay(id) {
-  currentTrip.stays = currentTrip.stays.filter(stay => stay.id !== id);
-  saveTrips();
+// ==============================
+// STORAGE
+// ==============================
+
+function saveTrips() {
+  localStorage.setItem("weekendizerTrips", JSON.stringify(trips));
+}
+
+// ==============================
+// INIT
+// ==============================
+
+if (trips.length > 0) {
+  currentTrip = trips[0];
+  renderTrips();
   renderStays();
 }
-function switchTrip() {
-  const panel = document.querySelector(".trip-panel");
-  const select = document.getElementById("tripSelect");
-  const tripId = Number(select.value);
-
-  // Exit animation
-  panel.classList.add("fade-out");
-
-  setTimeout(() => {
-    currentTrip = trips.find(trip => trip.id === tripId);
-
-    if (!currentTrip) return;
-
-    document.getElementById("currentTripTitle").textContent =
-      currentTrip.name;
-
-    renderStays();
-
-    // Enter animation
-    panel.classList.remove("fade-out");
-    panel.classList.add("fade-in");
-
-    setTimeout(() => {
-      panel.classList.remove("fade-in");
-    }, 350);
-
-  }, 300);
-}
-
-
