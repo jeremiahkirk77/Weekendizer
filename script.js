@@ -135,4 +135,62 @@ function deleteCurrentTrip() {
 
   renderList();
 }
+function parseListing(url) {
+  let platform = "Unknown";
+  let name = "Saved Stay";
+
+  if (url.includes("airbnb")) {
+    platform = "Airbnb";
+    name = "Airbnb Stay";
+  } else if (url.includes("booking")) {
+    platform = "Booking.com";
+    name = "Hotel Booking";
+  } else if (url.includes("hotels.com")) {
+    platform = "Hotels.com";
+    name = "Hotel Stay";
+  }
+
+  return {
+    id: Date.now(),
+    platform,
+    name,
+    url
+  };
+}
+
+function addListing() {
+  const input = document.getElementById("listingUrl");
+  const url = input.value.trim();
+  if (!url) return;
+
+  const stay = parseListing(url);
+  currentTrip.stays.push(stay);
+
+  saveTrips();
+  renderStays();
+
+  input.value = "";
+}
+
+function renderStays() {
+  const list = document.getElementById("stayList");
+  list.innerHTML = "";
+
+  currentTrip.stays.forEach(stay => {
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <strong>${stay.name}</strong>
+      <span class="platform">${stay.platform}</span>
+      <a href="${stay.url}" target="_blank">View</a>
+      <button onclick="removeStay(${stay.id})">✕</button>
+    `;
+    list.appendChild(li);
+  });
+}
+
+function removeStay(id) {
+  currentTrip.stays = currentTrip.stays.filter(stay => stay.id !== id);
+  saveTrips();
+  renderStays();
+}
 
