@@ -1,57 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Weekendizer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Travel App — Demo</title>
 
-  <link rel="stylesheet" href="style.css" />
+  <!-- Link to external stylesheet -->
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
   <div class="app-wrapper">
-    <div class="app-container">
+    <main class="app-container">
 
       <!-- HEADER -->
       <header class="app-header">
-        <h1>Weekendizer</h1>
-        <p class="subtitle">Plan smarter weekend escapes</p>
+        <h1>Travel Builder</h1>
+        <div class="subtitle">Find stays, plan trips, and ship code — all in one place.</div>
       </header>
 
-      <!-- TRIP CREATION -->
-      <section class="trip-bar">
-        <input
-          type="text"
-          id="tripNameInput"
-          placeholder="Name your trip (e.g. NYC Weekend)"
-        />
-        <button>New Trip</button>
-      </section>
+      <!-- TRIP BAR: includes New Trip + Search (both) -->
+      <div class="trip-bar" aria-label="Trip controls">
+        <!-- New trip input -->
+        <input id="tripNameInput" type="text" placeholder="New trip name (e.g. Weekend NYC)" aria-label="New trip name" />
+        <button id="addTripBtn" type="button">New Trip</button>
+
+        <!-- Optional search (keeps previous sample) -->
+        <input id="searchInput" type="text" placeholder="Search stays or destination..." aria-label="Search" />
+        <button id="searchBtn" type="button">Search</button>
+      </div>
 
       <!-- TRIP SELECT -->
-      <section class="trip-selector">
-        <select id="tripSelect"></select>
+      <div class="trip-selector">
+        <select id="tripSelect" aria-label="Select trip type">
+          <!-- Options populated by JS -->
+        </select>
+      </div>
+
+      <!-- HERO (new) -->
+      <section class="hero" id="hero">
+        <div class="hero__visual" aria-hidden="true"></div>
+
+        <div class="hero__content" role="region" aria-label="Hero">
+          <h1 class="hero__title">Explore new places. Build bold apps.</h1>
+          <p class="hero__subtitle">A minimal, modern starter — responsive, accessible, and ready for your code.</p>
+
+          <div class="hero__cta" role="group" aria-label="Hero actions">
+            <a class="btn btn--primary" href="#get-started">Get Started</a>
+            <a class="btn btn--ghost" href="#docs">Docs</a>
+          </div>
+        </div>
       </section>
 
-      <!-- ACTIVE TRIP -->
-      <section class="trip-panel">
-        <h2 id="currentTripTitle">Your Trip</h2>
+      <!-- TRIP PANEL -->
+      <section class="trip-panel" aria-labelledby="trip-panel-title">
+        <h2 id="trip-panel-title">Your trip</h2>
+        <!-- Current trip title (updated by JS) -->
+        <h2 id="currentTripTitle" style="margin-top:8px; margin-bottom:16px;">Your Trip</h2>
 
+        <!-- STAY INPUT -->
         <div class="listing-input">
-          <input
-            type="text"
-            id="listingUrl"
-            placeholder="Paste Airbnb or hotel link"
-          />
-          <button>Add Stay</button>
+          <input id="listingUrl" type="text" placeholder="Add a place name or URL" aria-label="Add listing" />
+          <button id="addListingBtn" type="button">Add</button>
         </div>
 
-        <ul id="stayList"></ul>
+        <!-- STAY LIST -->
+        <ul id="stayList" aria-live="polite">
+          <!-- stays populated by JS -->
+        </ul>
       </section>
 
-    </div>
+    </main>
   </div>
 
+  <!-- Link to external script -->
   <script src="script.js"></script>
 </body>
 </html>
