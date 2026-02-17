@@ -41,29 +41,108 @@ body {
    HERO SECTION
 ============================ */
 .hero {
+  position: relative;
   width: 100%;
-  height: 280px;
-  background: 
-    linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)), 
-    url("https://unsplash.com/photos/panoramic-photography-of-brooklyn-bridge-_QdFx92MO2U") center/cover no-repeat;
+  min-height: 56vh;                     /* responsive height */
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: clamp(24px, 6vw, 48px);
+  color: #fff;
+  overflow: hidden;
+  border-radius: 16px;
 }
 
-.hero-content {
+/* background visual: use a direct image URL (picsum used here) */
+.hero__visual {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(2,6,23,0.15) 0%, rgba(2,6,23,0.45) 100%),
+    url("https://picsum.photos/1600/900") center/cover no-repeat fixed;
+  filter: saturate(1.05) contrast(1.02);
+  transform-origin: center;
+  transition: transform 0.9s cubic-bezier(.2,.9,.3,1);
+  will-change: transform;
+  z-index: 0;
+}
+
+/* subtle parallax-ish scale on hover (desktop only) */
+@media (hover: hover) and (min-width: 600px) {
+  .hero:hover .hero__visual { transform: scale(1.03); }
+}
+
+/* content layout */
+.hero__content {
+  position: relative;
+  z-index: 2;
   text-align: center;
-  color: white;
+  max-width: 980px;
+  width: 100%;
 }
 
-.hero h1 {
-  font-size: 52px;
-  margin-bottom: 10px;
+/* headline */
+.hero__title {
+  font-size: clamp(28px, 4.5vw, 48px);
+  line-height: 1.02;
+  margin: 0 0 10px;
+  font-weight: 700;
+  text-shadow: 0 10px 30px rgba(2,6,23,0.6);
 }
 
-.hero p {
-  font-size: 18px;
-  opacity: 0.9;
+/* subtitle */
+.hero__subtitle {
+  margin: 0 0 18px;
+  font-size: clamp(14px, 1.6vw, 18px);
+  opacity: 0.92;
+  color: rgba(255,255,255,0.95);
+}
+
+/* buttons */
+.hero__cta {
+  display: inline-flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform .18s var(--ease, cubic-bezier(.2,.9,.3,1)), box-shadow .18s var(--ease);
+}
+
+.btn--primary {
+  background: linear-gradient(135deg,#ff7a18,#ffb347);
+  color: #000;
+  box-shadow: 0 8px 30px rgba(255,131,60,0.12);
+}
+
+.btn--ghost {
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+/* micro interactions */
+.btn:active { transform: translateY(1px); }
+.btn:focus { outline: 2px solid rgba(255,255,255,0.12); outline-offset: 2px; }
+
+/* small screens tweak */
+@media (max-width: 520px) {
+  .hero {
+    min-height: 48vh;
+    padding: clamp(18px, 6vw, 28px);
+  }
+  .hero__cta { flex-direction: column; gap: 10px; }
 }
 
 
