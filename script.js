@@ -193,4 +193,33 @@ function removeStay(id) {
   saveTrips();
   renderStays();
 }
+function switchTrip() {
+  const panel = document.querySelector(".trip-panel");
+  const select = document.getElementById("tripSelect");
+  const tripId = Number(select.value);
+
+  // Exit animation
+  panel.classList.add("fade-out");
+
+  setTimeout(() => {
+    currentTrip = trips.find(trip => trip.id === tripId);
+
+    if (!currentTrip) return;
+
+    document.getElementById("currentTripTitle").textContent =
+      currentTrip.name;
+
+    renderStays();
+
+    // Enter animation
+    panel.classList.remove("fade-out");
+    panel.classList.add("fade-in");
+
+    setTimeout(() => {
+      panel.classList.remove("fade-in");
+    }, 350);
+
+  }, 300);
+}
+
 
