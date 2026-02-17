@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Sunchaser — Plan & rank trips</title>
+  <title>Sunchaser - Chase The Sun/title>
 
   <!-- Link to external stylesheet -->
   <link rel="stylesheet" href="style.css">
@@ -15,58 +15,67 @@
       <!-- HEADER -->
       <header class="app-header">
         <h1>Sunchaser</h1>
-        <!-- subtitle removed per request -->
       </header>
 
-      <!-- HERO -->
-      <section class="hero" id="hero">
-        <div class="hero__visual" aria-hidden="true"></div>
+      <!-- HOME / GREETING PAGE -->
+      <section id="home" class="view active">
+        <section class="hero" id="hero">
+          <div class="hero__visual" aria-hidden="true"></div>
 
-        <div class="hero__content" role="region" aria-label="Hero">
-          <h1 class="hero__title">Welcome To The Weekendizer</h1>
-          <p class="hero__subtitle">Organizes stays, prices, activies and timelines</p>
+          <div class="hero__content" role="region" aria-label="Greeting">
+            <h1 class="hero__title">Welcome To The Weekendizer</h1>
+            <p class="hero__subtitle">Organizes stays, prices, activies and timelines</p>
 
-          <div class="hero__cta" role="group" aria-label="Hero actions">
-            <a class="btn btn--primary" href="#tripSelect">Start a Trip</a>
-            <a class="btn btn--ghost" href="#stayList">View Your Stays</a>
+            <div class="hero__cta">
+              <div class="home-search">
+                <input id="homeSearchInput" type="search" placeholder="Search trips (e.g. NYC weekend)" aria-label="Search trips" />
+                <button id="homeSearchBtn" type="button">Search</button>
+              </div>
+            </div>
           </div>
+        </section>
+
+        <div class="home-notes">
+          <p>Tip: type a trip name and press Enter — we'll show matching trips or let you create a new one.</p>
         </div>
       </section>
 
-      <!-- TRIP PANEL (centered overlap) -->
-      <section class="trip-panel" aria-labelledby="trip-panel-title">
-        <!-- Trip title is populated by JS (current trip name). No subtitle. -->
-        <h2 id="trip-panel-title">Your trip</h2>
-        <h3 id="currentTripTitle" class="trip-title">Your Trip</h3>
-
-        <!-- TRIP BAR: New Trip input + Create button -->
-        <div class="trip-bar" aria-label="Trip controls">
-          <input id="tripNameInput" type="text" placeholder="New trip name (e.g. Weekend NYC)" aria-label="New trip name" />
-          <button id="addTripBtn" type="button">New Trip</button>
-
-          <!-- Search (optional) -->
-          <input id="searchInput" type="text" placeholder="Search stays or destination..." aria-label="Search" />
-          <button id="searchBtn" type="button">Search</button>
+      <!-- TRIPS / RESULTS VIEW -->
+      <section id="tripsView" class="view hidden">
+        <div class="trips-header">
+          <button id="backHomeBtn" class="btn-small">← Back</button>
+          <div class="trips-search-results" id="searchResultsContainer" aria-live="polite"></div>
         </div>
 
-        <!-- TRIP SELECT -->
-        <div class="trip-selector">
-          <select id="tripSelect" aria-label="Select trip">
-            <!-- Options populated by JS -->
-          </select>
-        </div>
+        <!-- TRIP PANEL (centered/overlap style retained) -->
+        <section class="trip-panel" aria-labelledby="trip-panel-title">
+          <h2 id="trip-panel-title">Trips</h2>
+          <h3 id="currentTripTitle" class="trip-title">Your Trip</h3>
 
-        <!-- STAY INPUT (title/url + nightly price) -->
-        <div class="listing-input">
-          <input id="listingUrl" type="text" placeholder="Stay title or URL (e.g. Cozy Cabin / https://...)" aria-label="Add listing title or URL" />
-          <input id="listingPrice" type="number" step="1" min="0" placeholder="Nightly $ (e.g. 120)" aria-label="Nightly price" />
-          <button id="addListingBtn" type="button">Add</button>
-        </div>
+          <!-- TRIP BAR: New Trip input + Create button + Search -->
+          <div class="trip-bar" aria-label="Trip controls">
+            <input id="tripNameInput" type="text" placeholder="New trip name (e.g. Weekend NYC)" aria-label="New trip name" />
+            <button id="addTripBtn" type="button">New Trip</button>
 
-        <!-- STAY LIST -->
-        <ul id="stayList" aria-live="polite">
-          <!-- stays populated by JS -->
-        </ul>
+            <input id="searchInput" type="text" placeholder="Search stays or destination..." aria-label="Search" />
+            <button id="searchBtn" type="button">Search</button>
+          </div>
+
+          <!-- TRIP SELECT -->
+          <div class="trip-selector">
+            <select id="tripSelect" aria-label="Select trip"></select>
+          </div>
+
+          <!-- STAY INPUT (title/url + nightly price) -->
+          <div class="listing-input">
+            <input id="listingUrl" type="text" placeholder="Stay title or URL (e.g. Cozy Cabin / https://...)" aria-label="Add listing title or URL" />
+            <input id="listingPrice" type="number" step="1" min="0" placeholder="Nightly $ (e.g. 120)" aria-label="Nightly price" />
+            <button id="addListingBtn" type="button">Add</button>
+          </div>
+
+          <!-- STAY LIST -->
+          <ul id="stayList" aria-live="polite"></ul>
+        </section>
       </section>
 
     </main>
