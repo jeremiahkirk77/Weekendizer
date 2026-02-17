@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Travel App — Demo</title>
+  <title>Weekendizer — Plan & rank trips</title>
 
   <!-- Link to external stylesheet -->
   <link rel="stylesheet" href="style.css">
@@ -14,52 +14,52 @@
 
       <!-- HEADER -->
       <header class="app-header">
-        <h1>Travel Builder</h1>
-        <div class="subtitle">Find stays, plan trips, and ship code — all in one place.</div>
+        <h1>Weekendizer</h1>
+        <!-- subtitle removed per request -->
       </header>
 
-      <!-- TRIP BAR: includes New Trip + Search (both) -->
-      <div class="trip-bar" aria-label="Trip controls">
-        <!-- New trip input -->
-        <input id="tripNameInput" type="text" placeholder="New trip name (e.g. Weekend NYC)" aria-label="New trip name" />
-        <button id="addTripBtn" type="button">New Trip</button>
-
-        <!-- Optional search (keeps previous sample) -->
-        <input id="searchInput" type="text" placeholder="Search stays or destination..." aria-label="Search" />
-        <button id="searchBtn" type="button">Search</button>
-      </div>
-
-      <!-- TRIP SELECT -->
-      <div class="trip-selector">
-        <select id="tripSelect" aria-label="Select trip type">
-          <!-- Options populated by JS -->
-        </select>
-      </div>
-
-      <!-- HERO (new) -->
+      <!-- HERO -->
       <section class="hero" id="hero">
         <div class="hero__visual" aria-hidden="true"></div>
 
         <div class="hero__content" role="region" aria-label="Hero">
-          <h1 class="hero__title">Explore new places. Build bold apps.</h1>
-          <p class="hero__subtitle">A minimal, modern starter — responsive, accessible, and ready for your code.</p>
+          <h1 class="hero__title">Plan. Rank. Weekend.</h1>
+          <p class="hero__subtitle">Create trips, add stays with nightly prices, and compare what matters.</p>
 
           <div class="hero__cta" role="group" aria-label="Hero actions">
-            <a class="btn btn--primary" href="#get-started">Get Started</a>
-            <a class="btn btn--ghost" href="#docs">Docs</a>
+            <a class="btn btn--primary" href="#tripSelect">Start a Trip</a>
+            <a class="btn btn--ghost" href="#stayList">View Your Stays</a>
           </div>
         </div>
       </section>
 
-      <!-- TRIP PANEL -->
+      <!-- TRIP PANEL (centered overlap) -->
       <section class="trip-panel" aria-labelledby="trip-panel-title">
+        <!-- Trip title is populated by JS (current trip name). No subtitle. -->
         <h2 id="trip-panel-title">Your trip</h2>
-        <!-- Current trip title (updated by JS) -->
-        <h2 id="currentTripTitle" style="margin-top:8px; margin-bottom:16px;">Your Trip</h2>
+        <h3 id="currentTripTitle" class="trip-title">Your Trip</h3>
 
-        <!-- STAY INPUT -->
+        <!-- TRIP BAR: New Trip input + Create button -->
+        <div class="trip-bar" aria-label="Trip controls">
+          <input id="tripNameInput" type="text" placeholder="New trip name (e.g. Weekend NYC)" aria-label="New trip name" />
+          <button id="addTripBtn" type="button">New Trip</button>
+
+          <!-- Search (optional) -->
+          <input id="searchInput" type="text" placeholder="Search stays or destination..." aria-label="Search" />
+          <button id="searchBtn" type="button">Search</button>
+        </div>
+
+        <!-- TRIP SELECT -->
+        <div class="trip-selector">
+          <select id="tripSelect" aria-label="Select trip">
+            <!-- Options populated by JS -->
+          </select>
+        </div>
+
+        <!-- STAY INPUT (title/url + nightly price) -->
         <div class="listing-input">
-          <input id="listingUrl" type="text" placeholder="Add a place name or URL" aria-label="Add listing" />
+          <input id="listingUrl" type="text" placeholder="Stay title or URL (e.g. Cozy Cabin / https://...)" aria-label="Add listing title or URL" />
+          <input id="listingPrice" type="number" step="1" min="0" placeholder="Nightly $ (e.g. 120)" aria-label="Nightly price" />
           <button id="addListingBtn" type="button">Add</button>
         </div>
 
