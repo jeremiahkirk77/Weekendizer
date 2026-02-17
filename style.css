@@ -73,7 +73,7 @@ body {
    - visible demo arrow
 ============================ */
 #tripSelect {
-  padding: 14px 100px 14px 140px; /* second number controls spacing from arrow */
+  padding: 14px 40px 14px 14px; /* second number controls spacing from arrow */
   border-radius: 12px;
   border: 1px solid #ddd;
   font-size: 16px;
@@ -226,3 +226,47 @@ body::after { right: 0; transform: scaleX(-1); }
     gap: 8px;
   }
 }
+.listing-input {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.listing-input input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #1c1c1c;
+  color: white;
+}
+
+.listing-input button {
+  background: linear-gradient(135deg, #ff7a18, #ffb347);
+  border: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+#stayList li {
+  background: #151515;
+  padding: 14px;
+  border-radius: 12px;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#stayList a {
+  color: #ffb347;
+  text-decoration: none;
+}
+
+.platform {
+  font-size: 12px;
+  opacity: 0.6;
+}
+
