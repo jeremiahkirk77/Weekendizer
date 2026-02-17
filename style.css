@@ -269,4 +269,23 @@ body::after { right: 0; transform: scaleX(-1); }
   font-size: 12px;
   opacity: 0.6;
 }
+/* ========================= */
+/* TRIP SWITCH ANIMATION */
+/* ========================= */
+
+.trip-panel {
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+/* When panel is exiting */
+.trip-panel.fade-out {
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+/* When panel is entering */
+.trip-panel.fade-in {
+  opacity: 1;
+  transform: translateY(0);
+}
 
