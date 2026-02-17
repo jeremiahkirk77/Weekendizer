@@ -1,131 +1,172 @@
 // ==============================
-// GLOBAL STATE
+// GLOBAL STATE & STORAGE KEYS
 // ==============================
 
-let trips = JSON.parse(localStorage.getItem("weekendizerTrips")) || [];
+const STORAGE_KEY = "weekendizerTrips";
+const STORAGE_CURRENT_TRIP_KEY = "weekendizerCurrentTripId";
+
+let trips = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
 let currentTrip = null;
-
-// Keep last selected trip id so selection persists between reloads
-const savedTripId = Number(localStorage.getItem("weekendizerCurrentTripId")) || null;
+let savedTripId = Number(localStorage.getItem(STORAGE_CURRENT_TRIP_KEY)) || null;
 
 // ==============================
-// DOM ELEMENTS (robust lookups)
+// DOM ELEMENTS / VIEWS
 // ==============================
 
-// Trip creation
+const homeView = document.getElementById("home");
+const tripsView = document.getElementById("tripsView");
+const homeSearchInput = document.getElementById("homeSearchInput");
+const homeSearchBtn = document.getElementById("homeSearchBtn");
+const searchResultsContainer = document.getElementById("searchResultsContainer");
+const backHomeBtn = document.getElementById("backHomeBtn");
+
+// Trip panel elements
 const tripInput = document.getElementById("tripNameInput");
 const tripButton = document.getElementById("addTripBtn");
-
-// Trip select
 const tripSelect = document.getElementById("tripSelect");
-
-// Listing (stay) input + price + button
 const stayInput = document.getElementById("listingUrl");
 const stayPriceInput = document.getElementById("listingPrice");
 const stayButton = document.getElementById("addListingBtn");
-
-// Stay list UL
 const stayList = document.getElementById("stayList");
-
-// Trip title display and panel for animations
 const tripTitle = document.getElementById("currentTripTitle");
 const panel = document.querySelector(".trip-panel");
-
-// Optional: search controls
 const searchInput = document.getElementById("searchInput");
 const searchBtn = document.getElementById("searchBtn");
 
 // Defensive checks
-if (!tripSelect) console.warn("Missing #tripSelect");
-if (!stayList) console.warn("Missing #stayList");
-if (!panel) console.warn("Missing .trip-panel");
+if (!homeView || !tripsView) console.warn("Views missing");
+if (!stayList) console.warn("stayList missing");
 
 // ==============================
-// EVENT LISTENERS
+// VIEW HELPERS
 // ==============================
 
-if (tripButton) tripButton.addEventListener("click", addTrip);
-if (tripSelect) tripSelect.addEventListener("change", switchTrip);
-if (stayButton) stayButton.addEventListener("click", addListing);
-
-if (searchBtn) {
-  searchBtn.addEventListener("click", () => {
-    const q = (searchInput && searchInput.value.trim()) || "";
-    if (!q) { searchInput && searchInput.focus(); return; }
-    console.log("Search:", q);
-    // Example visual feedback
-    if (panel) {
-      panel.style.transition = "box-shadow 300ms ease";
-      panel.style.boxShadow = "0 10px 40px rgba(0,0,0,0.6)";
-      setTimeout(() => panel.style.boxShadow = "", 600);
-    }
-  });
+function showHome() {
+  homeView.classList.add("active"); homeView.classList.remove("hidden");
+  tripsView.classList.remove("active"); tripsView.classList.add("hidden");
+  homeSearchInput && homeSearchInput.focus();
 }
 
-// Keyboard shortcuts
-if (tripInput) tripInput.addEventListener("keydown", (e) => { if (e.key === "Enter") tripButton && tripButton.click(); });
-if (stayInput) stayInput.addEventListener("keydown", (e) => { if (e.key === "Enter") stayButton && stayButton.click(); });
-if (stayPriceInput) stayPriceInput.addEventListener("keydown", (e) => { if (e.key === "Enter") stayButton && stayButton.click(); });
-if (searchInput) searchInput.addEventListener("keydown", (e) => { if (e.key === "Enter") searchBtn && searchBtn.click(); });
-
-// Delegated remove handler for stays
-if (stayList) {
-  stayList.addEventListener("click", (e) => {
-    const target = e.target;
-    if (!target) return;
-    if (target.matches(".remove-stay-btn")) {
-      const idStr = target.getAttribute("data-id");
-      const id = idStr ? Number(idStr) : NaN;
-      if (!Number.isNaN(id)) removeStay(id);
-    }
-  });
+function showTrips() {
+  tripsView.classList.add("active"); tripsView.classList.remove("hidden");
+  homeView.classList.remove("active"); homeView.classList.add("hidden");
+  tripSelect && tripSelect.focus();
 }
 
 // ==============================
-// TRIP FUNCTIONS
+// SEARCH: from home -> trips view
 // ==============================
 
-function addTrip() {
-  const name = tripInput ? tripInput.value.trim() : "";
-  if (!name) return;
+function performSearch(q) {
+  const term = (q || "").trim().toLowerCase();
+  const results = term.length === 0 ? [] : trips.filter(t => t.name.toLowerCase().includes(term));
+  renderSearchResults(results, term);
+  showTrips();
+}
 
+function renderSearchResults(results, term) {
+  if (!searchResultsContainer) return;
+  searchResultsContainer.innerHTML = "";
+
+  const heading = document.createElement("div");
+  heading.style.marginBottom = "8px";
+  heading.textContent = term ? `Search results for “${term}”` : "Search";
+  searchResultsContainer.appendChild(heading);
+
+  const ul = document.createElement("ul");
+  ul.className = "search-results-list";
+
+  if (results.length === 0) {
+    const li = document.createElement("li");
+    li.className = "search-result";
+    li.textContent = "No trips found.";
+    const addBtn = document.createElement("button");
+    addBtn.className = "btn-small";
+    addBtn.textContent = term ? `Add trip "${term}"` : "Create a new trip";
+    addBtn.addEventListener("click", () => {
+      const name = term || (tripInput && tripInput.value.trim()) || `Trip ${Date.now()}`;
+      createTripAndOpen(name);
+    });
+    const right = document.createElement("div");
+    right.className = "actions";
+    right.appendChild(addBtn);
+
+    li.appendChild(right);
+    ul.appendChild(li);
+  } else {
+    results.forEach(trip => {
+      const li = document.createElement("li");
+      li.className = "search-result";
+
+      const label = document.createElement("div");
+      label.textContent = trip.name;
+
+      const actions = document.createElement("div");
+      actions.className = "actions";
+
+      const openBtn = document.createElement("button");
+      openBtn.className = "btn-small";
+      openBtn.textContent = "Open";
+      openBtn.addEventListener("click", () => {
+        selectTripById(trip.id);
+      });
+
+      const addBtn = document.createElement("button");
+      addBtn.className = "btn-small";
+      addBtn.textContent = "Copy & New";
+      addBtn.title = "Create a new trip with this name";
+      addBtn.addEventListener("click", () => {
+        createTripAndOpen(`${trip.name} (copy)`);
+      });
+
+      actions.appendChild(openBtn);
+      actions.appendChild(addBtn);
+
+      li.appendChild(label);
+      li.appendChild(actions);
+      ul.appendChild(li);
+    });
+  }
+
+  searchResultsContainer.appendChild(ul);
+}
+
+// ==============================
+// TRIP CRUD & SWITCHING
+// ==============================
+
+function createTripAndOpen(name) {
   const newTrip = { id: Date.now(), name, stays: [] };
-  trips.push(newTrip);
+  trips.unshift(newTrip);
   currentTrip = newTrip;
   saveTrips();
-  // persist selected trip
-  localStorage.setItem("weekendizerCurrentTripId", String(currentTrip.id));
-
   renderTrips();
-  renderStays();
+  renderStaysWithTransition();
+  localStorage.setItem(STORAGE_CURRENT_TRIP_KEY, String(currentTrip.id));
+}
 
+function addTrip() {
+  const name = (tripInput && tripInput.value.trim()) || "";
+  if (!name) return;
+  createTripAndOpen(name);
   if (tripInput) tripInput.value = "";
 }
 
-function switchTrip() {
-  if (!tripSelect) return;
-  const tripId = Number(tripSelect.value);
-  if (Number.isNaN(tripId)) return;
-
-  const nextTrip = trips.find(t => t.id === tripId);
-  if (!nextTrip) return;
-
-  // animate panel out
+function selectTripById(id) {
+  const t = trips.find(tr => tr.id === id);
+  if (!t) return;
   if (panel) panel.classList.add("fade-out");
-
   setTimeout(() => {
-    currentTrip = nextTrip;
-    // persist selected trip
-    localStorage.setItem("weekendizerCurrentTripId", String(currentTrip.id));
-    if (tripTitle) tripTitle.textContent = currentTrip.name;
-    renderStays();
-
+    currentTrip = t;
+    localStorage.setItem(STORAGE_CURRENT_TRIP_KEY, String(currentTrip.id));
+    renderTrips();
+    renderStaysWithTransition();
     if (panel) {
       panel.classList.remove("fade-out");
       panel.classList.add("fade-in");
       setTimeout(() => panel.classList.remove("fade-in"), 320);
     }
-  }, 220);
+  }, 200);
 }
 
 // ==============================
@@ -140,7 +181,6 @@ function parseListing(inputText, price) {
 
   if (text.startsWith("http")) {
     url = text;
-    // heuristics
     if (text.includes("airbnb")) { platform = "Airbnb"; name = "Airbnb Stay"; }
     else if (text.includes("booking")) { platform = "Booking.com"; name = "Booking Stay"; }
     else if (text.includes("hotels")) { platform = "Hotels.com"; name = "Hotels Stay"; }
@@ -149,36 +189,25 @@ function parseListing(inputText, price) {
     name = text;
   }
 
-  // ensure numeric price
   const nightly = Number(price);
   const nightlyPrice = Number.isFinite(nightly) && nightly > 0 ? nightly : null;
 
-  return {
-    id: Date.now(),
-    name,
-    platform,
-    url,
-    price: nightlyPrice
-  };
+  return { id: Date.now(), name, platform, url, price: nightlyPrice };
 }
 
 function addListing() {
   if (!currentTrip) {
-    // prompt the user to create a trip
-    if (tripInput) { tripInput.focus(); tripInput.classList.add("highlight"); setTimeout(() => tripInput && tripInput.classList.remove("highlight"), 600); }
+    tripInput && tripInput.focus();
     return;
   }
-
-  const value = stayInput ? stayInput.value.trim() : "";
-  const priceVal = stayPriceInput ? stayPriceInput.value.trim() : "";
+  const value = (stayInput && stayInput.value.trim()) || "";
+  const priceVal = (stayPriceInput && stayPriceInput.value.trim()) || "";
   if (!value) { stayInput && stayInput.focus(); return; }
 
   const item = parseListing(value, priceVal);
-  // insert at top
   currentTrip.stays.unshift(item);
-
   saveTrips();
-  renderStays();
+  renderStaysWithTransition();
 
   if (stayInput) stayInput.value = "";
   if (stayPriceInput) stayPriceInput.value = "";
@@ -189,11 +218,11 @@ function removeStay(id) {
   if (!currentTrip) return;
   currentTrip.stays = currentTrip.stays.filter(s => s.id !== id);
   saveTrips();
-  renderStays();
+  renderStaysWithTransition();
 }
 
 // ==============================
-// RENDERING
+// RENDERING (trips, stays)
 // ==============================
 
 function renderTrips() {
@@ -220,7 +249,7 @@ function renderTrips() {
   if (tripTitle) tripTitle.textContent = currentTrip ? currentTrip.name : "Your Trip";
 }
 
-function renderStays() {
+function renderStaysWithTransition() {
   if (!stayList) return;
   stayList.innerHTML = "";
 
@@ -279,10 +308,8 @@ function renderStays() {
     li.appendChild(left);
     li.appendChild(right);
 
-    // append with a tiny animation class
     li.classList.add("fade-in");
     stayList.appendChild(li);
-
     requestAnimationFrame(() => {
       li.classList.remove("fade-in");
       li.style.opacity = "1";
@@ -296,20 +323,50 @@ function renderStays() {
 // ==============================
 
 function saveTrips() {
-  localStorage.setItem("weekendizerTrips", JSON.stringify(trips));
-  if (currentTrip) {
-    localStorage.setItem("weekendizerCurrentTripId", String(currentTrip.id));
-  } else {
-    localStorage.removeItem("weekendizerCurrentTripId");
-  }
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(trips));
+  if (currentTrip) localStorage.setItem(STORAGE_CURRENT_TRIP_KEY, String(currentTrip.id));
+  else localStorage.removeItem(STORAGE_CURRENT_TRIP_KEY);
 }
+
+// ==============================
+// EVENTS / BINDINGS
+// ==============================
+
+if (homeSearchBtn) homeSearchBtn.addEventListener("click", () => performSearch(homeSearchInput.value));
+if (homeSearchInput) homeSearchInput.addEventListener("keydown", e => { if (e.key === "Enter") performSearch(homeSearchInput.value); });
+
+if (backHomeBtn) backHomeBtn.addEventListener("click", () => showHome());
+
+if (tripButton) tripButton.addEventListener("click", addTrip);
+if (tripSelect) tripSelect.addEventListener("change", () => {
+  const id = Number(tripSelect.value);
+  if (!Number.isNaN(id)) selectTripById(id);
+});
+
+if (stayButton) stayButton.addEventListener("click", addListing);
+if (stayList) {
+  stayList.addEventListener("click", e => {
+    const target = e.target;
+    if (!target) return;
+    if (target.matches(".remove-stay-btn")) {
+      const idStr = target.getAttribute("data-id");
+      const id = idStr ? Number(idStr) : NaN;
+      if (!Number.isNaN(id)) removeStay(id);
+    }
+  });
+}
+
+if (searchBtn) searchBtn.addEventListener("click", () => {
+  const q = (searchInput && searchInput.value.trim()) || "";
+  performSearch(q);
+});
+if (searchInput) searchInput.addEventListener("keydown", e => { if (e.key === "Enter") performSearch(searchInput.value); });
 
 // ==============================
 // INIT
 // ==============================
 
 function init() {
-  // restore trip selection if present
   if (trips.length > 0) {
     if (savedTripId) {
       const found = trips.find(t => t.id === savedTripId);
@@ -322,7 +379,10 @@ function init() {
   }
 
   renderTrips();
-  renderStays();
+  renderStaysWithTransition();
+
+  // Start on home view
+  showHome();
 }
 
 init();
